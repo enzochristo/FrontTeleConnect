@@ -9,16 +9,16 @@ export const Footer = () => {
         <SocialSection>
           <Divider />
           <SocialIcons>
-            <FacebookLogo size={24} color="white" />
-            <InstagramLogo size={24} color="white" />
-            <TiktokLogo size={24} color="white" />
-            <X size={24} color="white" />
+            <FacebookLogo size={30} color="white" />
+            <InstagramLogo size={30} color="white" />
+            <TiktokLogo size={30} color="white" />
+            <X size={30} color="white" />
           </SocialIcons>
         </SocialSection>
 
         <LogoSection>
-          <Divider />
           <img src={logo} alt="Teleconnect Logo" />
+          <Divider />
         </LogoSection>
       </TopSection>
 
@@ -69,6 +69,7 @@ const SocialSection = styled.div`
 const SocialIcons = styled.div`
   display: flex;
   gap: 15px;
+  margin-top: 10px;
 `;
 
 // 🔹 Linha divisória para estética
@@ -77,6 +78,8 @@ const Divider = styled.div`
   height: 2px;
   background-color: white;
   margin-right: 15px;
+  margin-left: 15px;
+  margin-top: 10px;
 
   @media (max-width: 768px) {
     width: 0px;
@@ -89,7 +92,7 @@ const InfoSection = styled.div`
   padding-top: 10px;
 
   p {
-    margin-bottom: 10px;
+    margin-bottom: 20px;
   }
 `;
 
@@ -99,7 +102,8 @@ const LogoSection = styled.div`
   align-items: center;
 
   img {
-    height: 30px;
+    margin-top: 10px;
+    height: 50px;
   }
   
   @media (max-width: 768px) {
