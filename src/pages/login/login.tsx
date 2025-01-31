@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
-import { fetchLogin } from "./api/fetchLogin"; // ✅ Importa a função de login
+import { fetchLoginPF } from "./api/fetchLoginPF"; // ✅ Importa função para Pessoa Física
+import { fetchLoginPJ } from "./api/fetchLoginPJ"; // ✅ Importa função para Pessoa Jurídica
+import { fetchLoginCL } from "./api/fetchLoginCL"; // ✅ Importa função para Colaborador
+import { BackButton } from "@/components/back-buttom";
 
 // 🔹 Importando imagens para cada tipo de conta
 import imagePessoaFisica from "../login/components/pf-pic.jpg";
@@ -11,13 +14,17 @@ import logo from "@/assets/blue_logo.png";
 
 export const Login = () => {
   const [activeTab, setActiveTab] = useState("Pessoa Física");
-  const [formData, setFormData] = useState({
-    email: "",
-    phone_number: "",
-    password: "",
-  });
+  const [formData, setFormData] = useState({ email: "", phone_number: "", password: "" });
   const [loading, setLoading] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const navigate = useNavigate(); // 🚀 Para redirecionamento após login
+
+  // Atualiza a largura da tela
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // 🔹 Define a imagem de fundo conforme a seleção
   const backgroundImage =
@@ -37,15 +44,16 @@ export const Login = () => {
     e.preventDefault();
     setLoading(true);
 
-    const loginData =
-      activeTab === "Pessoa Física"
-        ? { email: formData.email, phone_number: formData.phone_number, password: formData.password }
-        : { email: formData.email, password: formData.password };
-
-    const result = await fetchLogin(loginData);
+    let result;
+    if (activeTab === "Pessoa Física") {
+      result = await fetchLoginPF({ email: formData.email, phone_number: formData.phone_number, password: formData.password });
+    } else if (activeTab === "Pessoa Jurídica") {
+      result = await fetchLoginPJ({ cnpj: formData.cnpj, password: formData.password });
+    } else {
+      result = await fetchLoginCL({ email: formData.email, password: formData.password });
+    }
 
     if (result.success) {
-      alert("Login realizado com sucesso!");
       navigate("/home"); // 🚀 Redireciona para a página principal
     } else {
       alert(result.message);
@@ -55,12 +63,11 @@ export const Login = () => {
 
   return (
     <LoginContainer>
-      {/* 🔹 Área da Esquerda (Formulário) */}
       <LeftPanel>
         <Logo><img src={logo} alt="Teleconnect Logo" /></Logo>
+        <BackButton />
         <h2>Login</h2>
 
-        {/* 🔹 Botões de seleção */}
         <TabContainer>
           {["Pessoa Física", "Pessoa Jurídica", "Colaborador"].map((tab) => (
             <TabButton
@@ -77,7 +84,6 @@ export const Login = () => {
           Ainda não tem uma conta? <RegisterLink href="/register">Registrar aqui!</RegisterLink>
         </p>
 
-        {/* 🔹 Formulário Dinâmico com Animação */}
         <FormContainer key={activeTab}>
           <Form onSubmit={handleLogin}>
             {activeTab === "Pessoa Física" && (
@@ -125,14 +131,14 @@ export const Login = () => {
         </FormContainer>
       </LeftPanel>
 
-      {/* 🔹 Área da Direita (Imagem de Fundo com Transição Suave) */}
-      <RightPanel style={{ backgroundImage: `url(${backgroundImage})` }}>
-      </RightPanel>
+      {windowWidth >= 1000 && <RightPanel style={{ backgroundImage: `url(${backgroundImage})` }} />}
     </LoginContainer>
   );
 };
 
-// 🔹 Estilos (Mantidos do código original)
+
+
+// 🔹 Estilos
 const fadeIn = keyframes`
   from {
     opacity: 0;

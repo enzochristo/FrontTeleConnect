@@ -20,7 +20,6 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         <Link to="/home" onClick={onClose}>Home</Link>
         <Link to="/products" onClick={onClose}>Produtos e Serviços</Link>
         <Link to="/teleconnect" onClick={onClose}>Porque a Teleconnect?</Link>
-        <Link to="/login" className="login-button" onClick={onClose}>Login</Link>
       </nav>
     </SidebarStyle>
   );

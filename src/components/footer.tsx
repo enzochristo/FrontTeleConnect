@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { FacebookLogo, InstagramLogo, TiktokLogo, X } from "@phosphor-icons/react"; // Ícones das redes sociais
+import { FacebookLogo, InstagramLogo, LinkedinLogo, X } from "@phosphor-icons/react"; // Ícones das redes sociais
 import logo from "@/assets/white_logo.png"; // Importando a logo
 
 export const Footer = () => {
@@ -9,10 +9,8 @@ export const Footer = () => {
         <SocialSection>
           <Divider />
           <SocialIcons>
-            <FacebookLogo size={30} color="white" />
             <InstagramLogo size={30} color="white" />
-            <TiktokLogo size={30} color="white" />
-            <X size={30} color="white" />
+            <LinkedinLogo size={30} color="white" />
           </SocialIcons>
         </SocialSection>
 

@@ -1,60 +1,53 @@
-import { useState } from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 import { Header } from "../../components/header";
-import { Footer } from "../../components/footer"; // 🔹 Importando o Footer
-import { ProductCards } from "./components/productcards"; // 🔹 Importando os cards de produtos
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselPrevious,
-  CarouselNext,
-} from "../../components/ui/carousel"; // Importando o carrossel
+import { Footer } from "../../components/footer";
+import { ProductCards } from "./components/productcards";
+import { WhatsAppButton } from "../../components/whatsappbuttom";
 
 // 🔹 Importando imagens diretamente
-import Image1 from "../../assets/carousel4.png";
-import Image2 from "../../assets/carousel3.png";
-import Image3 from "../../assets/carousel2.png";
-import Image4 from "../../assets/carousel1.png";
-import Image5 from "../../assets/homepagepic1.png";
-import Image6 from "../../assets/homepagepic2.png";
-import Image7 from "../../assets/homepagepic3.png";
+import HeroImage from "../../assets/homepage1.png";
+import Image5 from "../../assets/homepage2.png";
+import Image6 from "../../assets/homepage3.png";
+import Image7 from "../../assets/homepage4.png";
 
 export const Home = () => {
-  // Lista de imagens (agora importadas diretamente)
-  const [images] = useState([Image1, Image2, Image3, Image4]);
+  const navigate = useNavigate(); // 🔹 Hook para navegação
 
   return (
     <>
       <Header />
       <HomeStyles>
-        <CarouselContainer>
-          <Carousel opts={{ loop: true }}>
-            <CarouselContent className="carousel-content">
-              {images.map((src, index) => (
-                <CarouselItem key={index} className="carousel-item">
-                  <img src={src} alt={`Slide ${index + 1}`} className="carousel-image" />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="carousel-prev" aria-label="Imagem anterior" />
-            <CarouselNext className="carousel-next" aria-label="Próxima imagem" />
-          </Carousel>
-        </CarouselContainer>
+        {/* 🔹 Imagem de destaque */}
+        <HeroSection>
+          <img src={HeroImage} alt="Destaque Teleconnect" />
+        </HeroSection>
 
-        <ProductCards /> {/* 🔹 Adicionando os cards abaixo do carrossel */}
+        {/* 🔹 Título antes dos produtos */}
+        <SectionTitle>Conheça nossos planos</SectionTitle>
+
+        {/* 🔹 Cards de produtos */}
+        <ProductCards />
+
+        {/* 🔹 Botão para Produtos e Serviços */}
+        <ButtonContainer>
+          <ProductsButton onClick={() => navigate("/products")}>
+            Ver nossos planos e serviços
+          </ProductsButton>
+        </ButtonContainer>
 
         <img className="images" src={Image5} alt="Imagem 1" />
         <img className="images2" src={Image6} alt="" />
         <img className="images" src={Image7} alt="" />
       </HomeStyles>
 
-      <Footer /> {/* 🔹 Adicionando o Footer no final da página */}
+      <WhatsAppButton phoneNumber="+5511966320919" message="Olá, tenho dúvidas sobre os planos" />
+      <Footer />
     </>
   );
 };
 
-// 🔹 Estilos para a Home Page e o carrossel
+// 🔹 Estilos para a Home Page
 const HomeStyles = styled.div`  
   min-height: 100vh;
   font-family: "Poppins", sans-serif;
@@ -62,75 +55,59 @@ const HomeStyles = styled.div`
   flex-direction: column;
   align-items: center;
 
-  h1 {
-    margin-top: 20px;
-    color: #4a004a;
-  }
-
   .images {
-    width: 80%;
+    width: 100%;
   }
-  .images2{
-    width: 80%;
-    /* background com largura de 100% */
+  
+  .images2 {
+    width: 100%;
     background-size: 100%;
     background-color: #210D94;
   }
 `;
 
-// 🔹 Estilos do Carrossel
-const CarouselContainer = styled.div`
-  width: 70%;
+// 🔹 Estilos para a Hero Section
+const HeroSection = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   overflow: hidden;
-  position: relative;
 
-  .carousel-content {
-    display: flex;
-    align-items: center;
-    flex-wrap: nowrap;
-  }
-
-  .carousel-item {
-    min-width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  
-  }
-
-  .carousel-image {
-    width: 80%;
+  img {
+    width: 100%;
     object-fit: cover;
-    border-radius: 10px;
   }
+`;
 
-  /* 🔹 Estilos para os botões de navegação */
-  .carousel-prev,
-  .carousel-next {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #210D94;
-    padding: 10px;
-    z-index: 2;
-    transition: background 0.1s ease-in-out;
-    border: none;
-    background: none;
-  }
+// 🔹 Título antes dos produtos
+const SectionTitle = styled.h2`
+  font-size: 32px;
+  color: #210D94;
+  font-weight: bold;
+  margin-top: 40px;
+  text-align: center;
+`;
 
-  .carousel-prev {
-    left: 10px;
-  }
+// 🔹 Estilos do botão
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin: 30px 0;
+`;
 
-  .carousel-next {
-    right: 10px;
-  }
+const ProductsButton = styled.button`
+  background: #210D94;
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  font-size: 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
 
-  /* 🔹 Responsividade para telas menores */
-  @media (max-width: 768px) {
-    .carousel-prev,
-    .carousel-next {
-      padding: 8px;
-    }
+  &:hover {
+    background: #2A1B8F;
   }
 `;

@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
-import { fetchRegister } from "./api/fetchRegister"; // 🔹 Importando o fetch separado
+import { fetchRegister } from "./api/fetchRegister"; // 🔹 Importa o fetch de registro
+import { BackButton } from "@/components/back-buttom";
 
 // 🔹 Importando imagens para cada tipo de conta
 import imagePessoaFisica from "./components/pf-pic.jpg";
@@ -11,44 +12,79 @@ import logo from "@/assets/blue_logo.png";
 
 export const Register = () => {
   const [activeTab, setActiveTab] = useState("Pessoa Física");
-  const [formData, setFormData] = useState({
+  const [formDataPF, setFormDataPF] = useState({
     name: "",
-    email: "",
     phone_number: "",
     cpf: "",
+    email: "",
     password: "",
   });
-
+  const [formDataPJ, setFormDataPJ] = useState({
+    name: "",
+    phone_number: "",
+    cnpj: "", 
+    email: "",
+    password: "",
+  });
+  const [formDataCL, setFormDataCL] = useState({
+    name: "",
+    email: "",
+    cpf: "",
+    password: "",
+    comp_password: "",
+  });
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const navigate = useNavigate(); // 🚀 Para redirecionamento após o registro
 
-  // 🔹 Definindo a imagem de fundo conforme a seleção
+  // Atualiza a largura da tela dinamicamente
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const backgroundImage =
-    activeTab === "Pessoa Física"
-      ? imagePessoaFisica
-      : activeTab === "Pessoa Jurídica"
-      ? imagePessoaJuridica
-      : imageColaborador;
+  activeTab === "Pessoa Física"
+    ? imagePessoaFisica
+    : activeTab === "Pessoa Jurídica"
+    ? imagePessoaJuridica
+    : imageColaborador;
 
   // 🔹 Atualiza os campos do formulário dinamicamente
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    if (activeTab === "Pessoa Física") {
+      setFormDataPF({ ...formDataPF, [name]: value });
+    } else if (activeTab === "Pessoa Jurídica") {
+      setFormDataPJ({ ...formDataPJ, [name]: value });
+    } else {
+      setFormDataCL({ ...formDataCL, [name]: value });
+    }
   };
 
-  // 🔹 Função para enviar o formulário para a API
+  // 🔹 Envia o formulário para a API conforme o tipo de conta
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const endpoint =
-      activeTab === "Pessoa Física"
-        ? "/pessoa/fisica/auth/register"
-        : activeTab === "Pessoa Jurídica"
-        ? "/pessoa/juridica/auth/register"
-        : "/colaborador/auth/register";
+    let endpoint = "";
+    let data = {};
 
-    const response = await fetchRegister(endpoint, formData);
+    if (activeTab === "Pessoa Física") {
+      endpoint = "/pessoa/fisica/auth/register";
+      data = formDataPF;
+    } else if (activeTab === "Pessoa Jurídica") {
+      endpoint = "/pessoa/juridica/auth/register";
+      data = formDataPJ;
+    } else {
+      // 🔹 Verifica se as senhas do colaborador coincidem
+      endpoint = "/manager/auth/register";
+      data = formDataCL;
+    }
+
+    const response = await fetchRegister(endpoint, data);
 
     if (response.success) {
-      alert("Registro realizado com sucesso!");
       navigate("/home"); // 🚀 Redireciona para a HomePage após o sucesso
     } else {
       alert(`Erro ao registrar: ${response.message}`);
@@ -57,12 +93,14 @@ export const Register = () => {
 
   return (
     <RegisterContainer>
-      {/* 🔹 Área da Esquerda (Formulário) */}
+      <BackButtonContainer>
+        <BackButton />
+      </BackButtonContainer>
+
       <LeftPanel>
         <Logo><img src={logo} alt="Teleconnect Logo" /></Logo>
         <h2>Registrar</h2>
 
-        {/* 🔹 Botões de seleção */}
         <TabContainer>
           {["Pessoa Física", "Pessoa Jurídica", "Colaborador"].map((tab) => (
             <TabButton
@@ -80,7 +118,6 @@ export const Register = () => {
           <LoginLink href="/login">Faça login aqui!</LoginLink>
         </p>
 
-        {/* 🔹 Formulário Dinâmico com Animação */}
         <FormContainer key={activeTab} onSubmit={handleRegister}>
           <Form>
             <label>Nome Completo</label>
@@ -88,7 +125,7 @@ export const Register = () => {
               type="text"
               name="name"
               placeholder="Digite seu nome completo"
-              value={formData.name}
+              value={activeTab === "Pessoa Física" ? formDataPF.name : activeTab === "Pessoa Jurídica" ? formDataPJ.name : formDataCL.name}
               onChange={handleInputChange}
               required
             />
@@ -98,7 +135,7 @@ export const Register = () => {
               type="email"
               name="email"
               placeholder="Digite seu email"
-              value={formData.email}
+              value={activeTab === "Pessoa Física" ? formDataPF.email : activeTab === "Pessoa Jurídica" ? formDataPJ.email : formDataCL.email}
               onChange={handleInputChange}
               required
             />
@@ -110,7 +147,7 @@ export const Register = () => {
                   type="text"
                   name="phone_number"
                   placeholder="Digite seu telefone"
-                  value={formData.phone_number}
+                  value={formDataPF.phone_number}
                   onChange={handleInputChange}
                   required
                 />
@@ -120,33 +157,91 @@ export const Register = () => {
                   type="text"
                   name="cpf"
                   placeholder="Digite seu CPF"
-                  value={formData.cpf}
+                  value={formDataPF.cpf}
                   onChange={handleInputChange}
                   required
                 />
               </>
             )}
 
-            <label>Senha</label>
-            <Input
-              type="password"
-              name="password"
-              placeholder="Crie uma senha"
-              value={formData.password}
-              onChange={handleInputChange}
-              required
-            />
+            {activeTab === "Pessoa Jurídica" && (
+              <>
+                <label>Telefone</label>
+                <Input
+                  type="text"
+                  name="phone_number"
+                  placeholder="Digite seu telefone"
+                  value={formDataPJ.phone_number}
+                  onChange={handleInputChange}
+                  required
+                />
+
+                <label>CNPJ</label>
+                <Input
+                  type="text"
+                  name="cnpj"
+                  placeholder="Digite seu CNPJ"
+                  value={formDataPJ.cnpj}
+                  onChange={handleInputChange}
+                  required
+                />
+
+                <label>Senha</label>
+                <Input
+                  type="password"
+                  name="password"
+                  placeholder="Crie uma senha"
+                  value={formDataPJ.password}
+                  onChange={handleInputChange}
+                  required
+                />
+              </>
+            )}
+
+            {activeTab === "Colaborador" && (
+              <>
+                <label>CPF</label>
+                <Input
+                  type="text"
+                  name="cpf"
+                  placeholder="Digite seu CPF"
+                  value={formDataCL.cpf}
+                  onChange={handleInputChange}
+                  required
+                />
+
+                <label>Senha</label>
+                <Input
+                  type="password"
+                  name="password"
+                  placeholder="Crie uma senha"
+                  value={formDataCL.password}
+                  onChange={handleInputChange}
+                  required
+                />
+
+                <label>Senha da Companhia</label>
+                <Input
+                  type="password"
+                  name="comp_password"
+                  placeholder="Senha da Companhia"
+                  value={formDataCL.comp_password}
+                  onChange={handleInputChange}
+                  required
+                />
+              </>
+            )}
 
             <RegisterButton type="submit">Registrar</RegisterButton>
           </Form>
         </FormContainer>
       </LeftPanel>
 
-      {/* 🔹 Área da Direita (Imagem de Fundo com Transição Suave) */}
-      <RightPanel style={{ backgroundImage: `url(${backgroundImage})` }} />
+      {windowWidth >= 1000 && <RightPanel style={{ backgroundImage: `url(${backgroundImage})` }} />}
     </RegisterContainer>
   );
 };
+
 
 // 🔹 Estilos
 const fadeIn = keyframes`
@@ -155,8 +250,15 @@ const fadeIn = keyframes`
 `;
 
 const RegisterContainer = styled.div`
+  margin-top: 90px;
   display: flex;
   height: 100vh;
+`;
+
+const BackButtonContainer = styled.div`
+  position: absolute;
+  top: 90px;
+  left: 20px;
 `;
 
 const LeftPanel = styled.div`
