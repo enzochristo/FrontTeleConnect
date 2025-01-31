@@ -26,7 +26,6 @@ export default function Sidebar(): JSX.Element {
 
   return (
     <SidebarContainer>
-      <StyledNavLink to="/dashboard/overview">Visão Geral</StyledNavLink>
       <StyledNavLink to="/dashboard/manage-plans">Gerenciar Produtos</StyledNavLink>
       <StyledNavLink to="/dashboard/create-plan">Criar Plano</StyledNavLink>
 
