@@ -95,6 +95,48 @@ export function Subscription(): JSX.Element {
     fetchPlans();
   }, []);
 
+  // Postar a compra na API pessoa/fisica/new/purchased/plan
+  const postPurchase = async () => {
+    try {
+
+      console.log("Enviando compra:", {
+        plan_type: selectedPlan?.tipo,
+        final_price: finalPrice,
+        cep: address.cep,
+        estado: address.estado,
+        cidade: address.cidade,
+        rua: address.rua,
+        numero: address.numero,
+      });
+
+      const response = await fetch("http://localhost:8000/pessoa/fisica/new/purchased/plan", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          plan_type: selectedPlan?.tipo,
+          final_price: finalPrice,
+          cep: address.cep,
+          estado: address.estado,
+          cidade: address.cidade,
+          rua: address.rua,
+          numero: address.numero,
+        }),
+      });
+
+      console.log("Resposta da API:", response)
+;
+
+      if (!response.ok) throw new Error("Erro ao postar compra");
+      nextStep();
+    } catch (error) {
+      console.error("Erro ao postar compra:", error);
+    }
+  };
+
+
   // 🔹 Seleciona o plano e define o preço inicial
   const handleSelectPlan = (plan: Plan) => {
     setSelectedPlan(plan);
@@ -192,7 +234,7 @@ export function Subscription(): JSX.Element {
             <Input type="text" placeholder="Nome no Cartão" value={payment.cardHolder} onChange={(e) => setPayment({ ...payment, cardHolder: e.target.value })} />
             <Input type="text" placeholder="Data de Validade (MM/YY)" value={payment.expiryDate} onChange={(e) => setPayment({ ...payment, expiryDate: formatExpiryDate(e.target.value) })} />
             <Input type="text" placeholder="CVV" value={payment.cvv} onChange={(e) => setPayment({ ...payment, cvv: e.target.value })} />
-            <Button onClick={nextStep}>Finalizar Compra</Button>
+            <Button onClick={postPurchase}>Finalizar Compra</Button>
           </Section>
         )}
 

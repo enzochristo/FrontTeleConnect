@@ -10,6 +10,7 @@ import { CreatePlan } from "../employee/dashboard/nested/createplan"; // ✅ Nov
 import { Information } from "../user/information/information";
 import { useEffect, useState } from "react";
 import { ManagePlans } from "../employee/dashboard/nested/manageplans";
+import { WhatsAppMessage } from "../b2b/b2b";
 
 // 🔹 Hook para verificar a autenticação do usuário
 const useAuth = () => {
@@ -141,6 +142,10 @@ const routes: RouteObject[] = [
     {
         path: "*",
         element: <Navigate to="/home" replace />,
+    },
+    {
+        path: "/pj",
+        element: <WhatsAppMessage />,
     }
 ];
 

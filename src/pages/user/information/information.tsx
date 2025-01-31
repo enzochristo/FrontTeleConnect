@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Header } from "../../../components/header";
 import { Footer } from "../../../components/footer";
 import CustomerData from "../information/components/customerdata";
-import CustomerPlans from "../information/components/customerplans";
+import CustomerPlans from "./components/customerplans";
 
 export function Information(): JSX.Element {
 
@@ -12,6 +12,7 @@ export function Information(): JSX.Element {
       <Header />
       <Container>
         <CustomerData />
+        <CustomerPlans />
       </Container>
       <Footer />
     </>

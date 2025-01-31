@@ -48,12 +48,14 @@ export const Login = () => {
     if (activeTab === "Pessoa Física") {
       result = await fetchLoginPF({ email: formData.email, phone_number: formData.phone_number, password: formData.password });
     } else if (activeTab === "Pessoa Jurídica") {
-      result = await fetchLoginPJ({ cnpj: formData.cnpj, password: formData.password });
+      result = await fetchLoginPJ({ email: formData.email, password: formData.password });
     } else {
       result = await fetchLoginCL({ email: formData.email, password: formData.password });
     }
 
-    if (result.success) {
+    if (result.success && activeTab === "Pessoa Jurídica") {
+      navigate("/pj");
+    } else if (result.success)  {
       navigate("/home"); // 🚀 Redireciona para a página principal
     } else {
       alert(result.message);

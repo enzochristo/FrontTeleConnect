@@ -102,6 +102,10 @@ const FormContainer = styled.form`
   width: 100%;
   max-width: 500px;
   background: #f9f9f9;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  justify-self: center;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);

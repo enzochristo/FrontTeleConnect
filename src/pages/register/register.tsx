@@ -161,6 +161,16 @@ export const Register = () => {
                   onChange={handleInputChange}
                   required
                 />
+
+                <label>Senha</label>
+                <Input
+                  type="password"
+                  name="password"
+                  placeholder="Crie uma senha"
+                  value={formDataPF.password}
+                  onChange={handleInputChange}
+                  required
+                />
               </>
             )}
 
